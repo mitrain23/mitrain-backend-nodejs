@@ -90,39 +90,62 @@ class PostService {
   }
 
 
-  static async searchQuery(searchText: string, lokasi: string, minPrice: number, maxPrice: number, skip: number, take: number) {
+  static async searchQuery(searchText: string, lokasi: string, minPrice: number | undefined, maxPrice: number | undefined, skip: number, take: number) {
     const search = searchText || '';
     const location = lokasi || '';
-    const strMinPrice = String(minPrice);
-    const strMaxPrice = String(maxPrice);
+    const strMinPrice = minPrice !== undefined ? String(minPrice) : undefined;
+    const strMaxPrice = maxPrice !== undefined ? String(maxPrice) : undefined;
     const skipPage = skip || 0;
     const takePage = take || 10;
-    
-    try {
-      const results = await prisma.post.findMany({
-        where: {
-          location: {
-            contains: location,
-          },
-          title: {
-            contains: search,
-          },
-          price_min: {
-            gte: strMinPrice,
-          },
-          price_max: {
-            lte: strMaxPrice,
-          },
-        },
-        skip: skipPage,
-        take: takePage
-      });
 
+    
+  
+    try {
+      let whereClause: any = {};
+  
+      if (search !== '') {
+        // Apply search filter if searchText is not empty
+        whereClause.title = {
+          contains: search,
+        };
+      }
+  
+      if (location !== '') {
+        // Apply location filter if lokasi is not empty
+        whereClause.location = {
+          contains: location,
+        };
+      }
+  
+      if (strMinPrice !== undefined) {
+        // Apply minPrice filter if minPrice is not undefined
+        whereClause.price_min = {
+          gte: strMinPrice,
+        };
+      }
+  
+      if (strMaxPrice !== undefined) {
+        // Apply maxPrice filter if maxPrice is not undefined
+        whereClause.price_max = {
+          lte: strMaxPrice,
+        };
+      }
+  
+      const results = await prisma.post.findMany({
+        where: whereClause,
+        include: { author: { select: { name: true } }, image: true },
+        skip: skipPage,
+        take: takePage,
+      });
+  
       return results;
     } catch (error) {
       // Handle error
     }
   }
+  
+  
+
 
 
 }
