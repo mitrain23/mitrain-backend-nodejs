@@ -1,5 +1,6 @@
-import express from 'express';
 import cors from 'cors';
+const express = require('express');
+
 import router from './routes/userRoute';
 import allRoutes from './routes';
 import path from 'path';

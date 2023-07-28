@@ -76,6 +76,40 @@ class PostService {
     }
   }
 
+
+  static async updatePost(id: number, postData: PostModel, images: any) {
+    try {
+      const postDataInput = {
+        title: postData.title,
+        description: postData.description,
+        price_min: postData.price_min,
+        price_max: postData.price_max,
+        location: postData.location,
+        phone_number_whatsapp: postData.phone_number_whatsapp,
+        phone_number_contact: postData.phone_number_contact,
+        image: {
+          createMany: {
+            data: images.map((file: any) => ({
+              name: file.filename,
+            })),
+          },
+        },
+      };
+
+      const updatedPost = await prisma.post.update({
+        where: {id: id},
+        data: postDataInput
+      })
+
+      return updatedPost;
+    } catch (error: any) {
+      console.error(error);
+      throw new Error('Failed to update post');
+    }
+
+  }
+
+
   static async deletePost(id: any) {
     try {
       const deletedPost = await prisma.post.delete({
@@ -98,53 +132,53 @@ class PostService {
     const skipPage = skip || 0;
     const takePage = take || 10;
 
-    
-  
+
+
     try {
       let whereClause: any = {};
-  
+
       if (search !== '') {
         // Apply search filter if searchText is not empty
         whereClause.title = {
           contains: search,
         };
       }
-  
+
       if (location !== '') {
         // Apply location filter if lokasi is not empty
         whereClause.location = {
           contains: location,
         };
       }
-  
+
       if (strMinPrice !== undefined) {
         // Apply minPrice filter if minPrice is not undefined
         whereClause.price_min = {
           gte: strMinPrice,
         };
       }
-  
+
       if (strMaxPrice !== undefined) {
         // Apply maxPrice filter if maxPrice is not undefined
         whereClause.price_max = {
           lte: strMaxPrice,
         };
       }
-  
+
       const results = await prisma.post.findMany({
         where: whereClause,
         include: { author: { select: { name: true } }, image: true },
         skip: skipPage,
         take: takePage,
       });
-  
+
       return results;
     } catch (error) {
       // Handle error
     }
   }
-  
-  
+
+
 
 
 

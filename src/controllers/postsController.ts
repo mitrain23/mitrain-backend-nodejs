@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import PostService from "../services/postService";
 import { PostModel } from "../models/postModel";
+import { parse } from "path";
 
 
 class PostsController {
@@ -55,6 +56,23 @@ class PostsController {
             res.status(500).json({ error: error.message });
         }
     }
+
+    static async updatePost(req: Request, res: Response) {
+        const id = parseInt(req.params.id);
+        try {
+            const postData = req.body;
+            const images = req.files;
+            const updatedPost = await PostService.updatePost(id, postData, images)
+            res.json({
+                updatedPost
+            })
+        } catch(error: any) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+
+
 
 
     static async deletePost(req: Request, res: Response) {

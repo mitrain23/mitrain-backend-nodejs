@@ -22,6 +22,10 @@ router.get('/postAuthor/:id', verifyToken, PostsController.getPostByAuthor)
 router.post('/create', upload.array('images', 5), verifyToken, PostsController.createPost);
 
 
+// update
+router.post('/update/:id', upload.array('images', 5), PostsController.updatePost);
+
+
 // delete
 router.delete('/delete/:id', verifyToken, PostsController.deletePost)
 
