@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node src/index.ts",
     "prisma:migrate:dev": "npx prisma migrate dev",
-    "start": "npm run prisma:migrate:dev && ts-node src/index.ts"
+    "start": "npm run prisma:migrate:dev --name oke && ts-node src/index.ts"
     
   },
   "keywords": [],

@@ -4,12 +4,13 @@ CREATE TABLE `Post` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
     `title` VARCHAR(255) NOT NULL,
-    `description` VARCHAR(191) NULL,
+    `description` VARCHAR(1000) NULL,
     `price_min` VARCHAR(191) NOT NULL,
     `price_max` VARCHAR(191) NOT NULL,
     `location` VARCHAR(191) NOT NULL,
     `phone_number_whatsapp` VARCHAR(191) NOT NULL,
-    `phone_number_contact` VARCHAR(191) NOT NULL,
+    `phone_number_contact` VARCHAR(191) NULL,
+    `subtitle` VARCHAR(191) NULL,
     `authorId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -19,8 +20,10 @@ CREATE TABLE `Post` (
 CREATE TABLE `Image` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
-    `postId` INTEGER NOT NULL,
+    `postId` INTEGER NULL,
+    `userId` INTEGER NULL,
 
+    UNIQUE INDEX `Image_userId_key`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -39,4 +42,7 @@ CREATE TABLE `User` (
 ALTER TABLE `Post` ADD CONSTRAINT `Post_authorId_fkey` FOREIGN KEY (`authorId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Image` ADD CONSTRAINT `Image_postId_fkey` FOREIGN KEY (`postId`) REFERENCES `Post`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Image` ADD CONSTRAINT `Image_postId_fkey` FOREIGN KEY (`postId`) REFERENCES `Post`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Image` ADD CONSTRAINT `Image_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
