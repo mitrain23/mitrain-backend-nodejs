@@ -3,6 +3,7 @@ import cors from 'cors';
 import router from './routes/userRoute';
 import allRoutes from './routes';
 import path from 'path';
+require('dotenv').config();
 
 
 const app = express();
@@ -19,6 +20,5 @@ app.use(allRoutes)
 
 
 
-app.listen(8080, () => {
-    console.log('listening on port 8080');
-});
+const PORT = process.env.PORT;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
