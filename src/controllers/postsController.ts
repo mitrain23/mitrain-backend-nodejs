@@ -29,7 +29,7 @@ class PostsController {
     }
 
     static async getPostByAuthor(req: Request, res: Response) {
-        console.log(req.body.userId, 'ini dwaohudahuidaw');
+        console.log(req.body.userId, 'ini userId');
         const authorId = parseInt(req.params.id);
         try {
             const getPostByAuthor = await PostService.getPostByAuthor(authorId);
@@ -70,9 +70,6 @@ class PostsController {
             res.status(500).json({ error: error.message });
         }
     }
-
-
-
 
 
     static async deletePost(req: Request, res: Response) {

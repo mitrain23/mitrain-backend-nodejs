@@ -1,0 +1,44 @@
+version: '3.3'
+
+services:
+
+  express-app:
+    container_name: express-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm run dev
+    ports:
+      - '2000:2000'
+    depends_on:
+      - mySqlCont
+    environment:
+      DATABASE_URL: mysql://user:mypassword@mySqlCont:4001/mitraindb
+      PORT: 2000
+      JWT_SECRET: diuwahiuwahdaiu23133212uihdwa
+    env_file: 
+      - .env
+
+
+  mySqlCont:
+    image: mysql:latest
+    container_name: mySqlCont
+    restart: always
+    command: --port=4001
+    environment:
+      MYSQL_USER: user
+      MYSQL_ROOT_PASSWORD: mypassword
+      MYSQL_PASSWORD: mypassword
+      MYSQL_DATABASE: mitraindb
+    volumes:
+      - mitrain-db:/var/lib/mysql
+    ports:
+      - '5000:5000'
+    env_file:
+      - .env
+
+
+
+volumes:
+  mitrain-db:
+
