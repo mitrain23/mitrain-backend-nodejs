@@ -16,8 +16,7 @@ services:
       DATABASE_URL: mysql://user:mypassword@mySqlCont:4001/mitraindb
       PORT: 2000
       JWT_SECRET: diuwahiuwahdaiu23133212uihdwa
-    env_file: 
-      - .env
+    
 
 
   mySqlCont:
@@ -34,8 +33,7 @@ services:
       - mitrain-db:/var/lib/mysql
     ports:
       - '5000:5000'
-    env_file:
-      - .env
+    
 
 
 
