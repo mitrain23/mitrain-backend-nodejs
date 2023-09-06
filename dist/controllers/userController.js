@@ -17,17 +17,24 @@ const userService_1 = __importDefault(require("../services/userService"));
 class UserController {
     static registerUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const errors = (0, express_validator_1.validationResult)(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
             try {
-                const { email, password, name } = req.body;
-                const userData = { email, password, name };
-                const newUser = yield userService_1.default.registerUser(userData);
-                const token = yield userService_1.default.generateToken(newUser.id);
-                res.json({
-                    token
+                const { email, password, name, address, phoneIntWhatsapp, phoneIntContact } = req.body;
+                const images = req.file;
+                const userData = {
+                    email,
+                    password,
+                    name,
+                    address,
+                    phoneIntWhatsapp,
+                    phoneIntContact
+                };
+                const errors = (0, express_validator_1.validationResult)(req);
+                if (!errors.isEmpty()) {
+                    return res.status(400).json({ errors: errors.array() });
+                }
+                const newUser = yield userService_1.default.registerUser(userData, images);
+                res.status(200).json({
+                    data: newUser
                 });
             }
             catch (err) {
@@ -45,17 +52,29 @@ class UserController {
                 const { email, password } = req.body;
                 const user = yield userService_1.default.loginUser(email, password);
                 const token = yield userService_1.default.generateToken(user.id);
-                res.json({
+                res.status(200).json({
                     data: {
                         id: user.id,
-                        email: user.email,
-                        name: user.email
+                        email: user.email
                     },
                     token
                 });
             }
             catch (err) {
-                res.status(500).json({ error: 'Error while registering user' });
+                res.status(500).json({ error: err.message });
+            }
+        });
+    }
+    static getAllUser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield userService_1.default.getAllUser();
+                res.status(200).json({
+                    data: user
+                });
+            }
+            catch (err) {
+                res.status(500).json({ error: err.message });
             }
         });
     }

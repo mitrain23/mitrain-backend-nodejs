@@ -18,7 +18,7 @@ class PostsController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const posts = yield postService_1.default.getAllPosts();
-                res.json(posts);
+                res.status(200).json({ data: posts });
             }
             catch (err) {
                 res.status(500).json({ error: err.message });
@@ -27,13 +27,13 @@ class PostsController {
     }
     static getPostById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const id = parseInt(req.params.id);
+            const id = req.params.id;
             try {
                 const getPostById = yield postService_1.default.getPostById(id);
                 if (getPostById == null) {
                     throw Error('Post not found');
                 }
-                res.json(getPostById);
+                res.status(200).json({ data: getPostById });
             }
             catch (err) {
                 res.status(500).json({ error: err.message });
@@ -42,29 +42,39 @@ class PostsController {
     }
     static getPostByAuthor(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(req.body.userId, 'ini userId');
-            const authorId = parseInt(req.params.id);
+            const mitraId = req.params.id;
             try {
-                const getPostByAuthor = yield postService_1.default.getPostByAuthor(authorId);
+                const getPostByAuthor = yield postService_1.default.getPostByAuthor(mitraId);
                 if (getPostByAuthor == null) {
                     throw Error('Post not found');
                 }
-                res.json({
-                    getPostByAuthor
+                res.status(200).json({
+                    data: getPostByAuthor
                 });
             }
-            catch (err) {
-            }
+            catch (err) { }
         });
     }
     static createPost(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const postData = req.body;
+                const { title, description, priceMin, priceMax, location, phoneIntWhatsapp, phoneIntContact, category } = req.body;
+                const postData = {
+                    title,
+                    description,
+                    priceMin,
+                    priceMax,
+                    location,
+                    phoneIntWhatsapp,
+                    phoneIntContact,
+                    category
+                };
                 const images = req.files;
-                console.log(images === null || images === void 0 ? void 0 : images.length);
-                const createdPost = yield postService_1.default.createPost(postData, images);
-                res.json(createdPost);
+                const mitra = req.body.mitraId;
+                const createdPost = yield postService_1.default.createPost(postData, images, mitra);
+                res.status(200).json({
+                    data: createdPost
+                });
             }
             catch (error) {
                 res.status(500).json({ error: error.message });
@@ -73,13 +83,14 @@ class PostsController {
     }
     static updatePost(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const id = parseInt(req.params.id);
+            const id = req.params.id;
             try {
+                const mitra = req.body.mitraId;
                 const postData = req.body;
                 const images = req.files;
-                const updatedPost = yield postService_1.default.updatePost(id, postData, images);
-                res.json({
-                    updatedPost
+                const updatedPost = yield postService_1.default.updatePost(id, postData, images, mitra);
+                res.status(200).json({
+                    data: updatedPost
                 });
             }
             catch (error) {
@@ -89,55 +100,16 @@ class PostsController {
     }
     static deletePost(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const idParams = req.params.id;
-            const id = parseInt(idParams, 10);
+            const id = req.params.id;
+            const mitra = req.body.mitraId;
             try {
-                console.log(id);
-                const deletedPost = yield postService_1.default.deletePost(id);
-                res.json({
+                const deletedPost = yield postService_1.default.deletePost(id, mitra);
+                res.status(200).json({
                     data: `post deleted successfully, ${deletedPost.id}`
                 });
             }
             catch (error) {
                 res.status(500).json({ error: error.message });
-            }
-        });
-    }
-    static searchQuery(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { lokasi, price_min, price_max, search, page, pageSize } = req.query;
-            const minPrice = parseFloat(price_min);
-            const maxPrice = parseFloat(price_max);
-            const parsedPage = parseInt(page, 10);
-            const parsedPageSize = parseInt(pageSize, 10);
-            const skip = parsedPage * parsedPageSize - parsedPageSize;
-            const take = parsedPageSize;
-            console.log(lokasi);
-            if (isNaN(minPrice) && isNaN(maxPrice)) {
-                try {
-                    const results = yield postService_1.default.searchQuery(search, lokasi, undefined, undefined, skip, take);
-                    res.json({
-                        results,
-                    });
-                }
-                catch (err) {
-                    res.status(500).json({ error: err.message });
-                }
-            }
-            else if (isNaN(minPrice) || isNaN(maxPrice)) {
-                return res.status(400).json({ error: 'Invalid price range.' });
-            }
-            else {
-                console.log(minPrice, maxPrice);
-                try {
-                    const results = yield postService_1.default.searchQuery(search, lokasi, minPrice, maxPrice, skip, take);
-                    res.json({
-                        results,
-                    });
-                }
-                catch (err) {
-                    res.status(500).json({ error: err.message });
-                }
             }
         });
     }

@@ -16,62 +16,88 @@ const prisma_1 = __importDefault(require("../utils/prisma"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 require('dotenv').config();
-console.log(process.env.JWT_SECRET);
-const salt = 10;
 class UserService {
-    static registerUser(userData) {
+    static registerUser(userData, images) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { email, password, name } = userData;
-                if (!email || !password || !name) {
-                    throw Error('Name, email, and password are required');
-                }
-                const existingUser = yield prisma_1.default.user.findUnique({
-                    where: { email: email }
-                });
-                if (existingUser) {
-                    throw Error('User already exists');
-                }
-                const hashedPassword = yield bcrypt_1.default.hash(password, salt);
-                const newUser = yield prisma_1.default.user.create({
-                    data: {
-                        email,
-                        password: hashedPassword,
-                        name
+            const { email, password, name, address, phoneIntWhatsapp, phoneIntContact } = userData;
+            const imagePath = images.path;
+            if (!email ||
+                !password ||
+                !name ||
+                !address ||
+                !phoneIntWhatsapp ||
+                !phoneIntContact ||
+                !imagePath) {
+                throw Error('Fill all the require data');
+            }
+            const existingUser = yield prisma_1.default.user.findUnique({
+                where: { email: email }
+            });
+            if (existingUser) {
+                throw Error('User already exists');
+            }
+            const hashPassword = yield bcrypt_1.default.hash(password, 10);
+            const newUser = yield prisma_1.default.user.create({
+                data: {
+                    email,
+                    password: hashPassword,
+                    name,
+                    address,
+                    phoneIntContact,
+                    phoneIntWhatsapp,
+                    isPremium: false,
+                    images: {
+                        create: {
+                            url: imagePath
+                        }
                     }
-                });
-                return newUser;
-            }
-            catch (err) {
-                throw Error(err.message);
-            }
+                },
+                include: {
+                    images: {
+                        select: {
+                            url: true
+                        }
+                    }
+                }
+            });
+            return newUser;
         });
     }
     static loginUser(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                // Check if user exists
-                const user = yield prisma_1.default.user.findUnique({ where: { email } });
-                if (!user) {
-                    throw new Error('Invalid credentials');
-                }
-                // Compare passwords
-                const passwordsMatch = yield bcrypt_1.default.compare(password, user.password);
-                if (!passwordsMatch) {
-                    throw new Error('Invalid credentials');
-                }
-                return user;
+            // Check if user exists
+            const user = yield prisma_1.default.user.findUnique({ where: { email } });
+            if (!user) {
+                throw new Error('Invalid credentials');
             }
-            catch (error) {
-                console.error('login error');
-                throw error;
+            // Compare passwords
+            const passwordsMatch = yield bcrypt_1.default.compare(password, user.password);
+            if (!passwordsMatch) {
+                throw new Error('Invalid credentials');
             }
+            return user;
         });
     }
     static generateToken(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const token = jsonwebtoken_1.default.sign({ userId }, process.env.JWT_SECRET || '', { expiresIn: '4h' });
+            const token = jsonwebtoken_1.default.sign({ userId }, process.env.JWT_SECRET || '', {
+                expiresIn: '4h'
+            });
             return token;
+        });
+    }
+    static getAllUser() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield prisma_1.default.user.findMany({
+                include: {
+                    images: {
+                        select: {
+                            url: true
+                        }
+                    }
+                }
+            });
+            return user;
         });
     }
 }

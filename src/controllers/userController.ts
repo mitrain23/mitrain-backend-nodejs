@@ -1,62 +1,76 @@
-import { Request, Response } from "express";
-import { validationResult } from "express-validator";
-import UserService from "../services/userService";
-
-
-
+import { Request, Response } from 'express'
+import { validationResult } from 'express-validator'
+import UserService from '../services/userService'
 
 class UserController {
-    static async registerUser(req: Request, res: Response): Promise<any> {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-          return res.status(400).json({ errors: errors.array() });
-        }
+  static async registerUser(req: Request, res: Response): Promise<any> {
+    try {
+      const {
+        email,
+        password,
+        name,
+        address,
+        phoneIntWhatsapp,
+        phoneIntContact
+      } = req.body
+      const images = req.file
+      const userData = {
+        email,
+        password,
+        name,
+        address,
+        phoneIntWhatsapp,
+        phoneIntContact
+      }
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() })
+      }
+      const newUser = await UserService.registerUser(userData, images)
 
-        try {
-            const { email, password, name } = req.body
-            const userData = { email, password, name };
-            const newUser = await UserService.registerUser(userData)
+      res.status(200).json({
+        data: newUser
+      })
+    } catch (err: any) {
+      res.status(500).json({ error: err.message })
+    }
+  }
 
-            const token = await UserService.generateToken(newUser.id)
-
-            res.json({
-                token   
-            })
-
-        } catch (err: any) {
-              res.status(500).json({ error: err.message });
-        }
+  static async loginUser(req: Request, res: Response) {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() })
     }
 
+    try {
+      const { email, password } = req.body
+      const user = await UserService.loginUser(email, password)
 
-    static async loginUser(req: Request, res: Response) {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-          return res.status(400).json({ errors: errors.array() });
-        }
+      const token = await UserService.generateToken(user.id)
 
-        try {
-            const { email, password} = req.body
-            const user = await UserService.loginUser(email, password);
-
-            const token = await UserService.generateToken(user.id);
-
-            res.json({
-                data: {
-                    id: user.id,
-                    email: user.email,
-                    name: user.email
-                },
-                token
-            })
-
-        } catch (err) {
-            res.status(500).json({ error: 'Error while registering user' });
-        }
+      res.status(200).json({
+        data: {
+          id: user.id,
+          email: user.email
+        },
+        token
+      })
+    } catch (err: any) {
+      res.status(500).json({ error: err.message })
     }
+  }
+
+  static async getAllUser(req: Request, res: Response) {
+    try {
+      const user = await UserService.getAllUser()
+
+      res.status(200).json({
+        data: user
+      })
+    } catch (err: any) {
+      res.status(500).json({ error: err.message })
+    }
+  }
 }
-
-
-
 
 export default UserController

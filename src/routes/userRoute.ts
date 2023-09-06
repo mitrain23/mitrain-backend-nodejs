@@ -1,18 +1,14 @@
-import express from "express";
-import UserController from "../controllers/userController";
+import express from 'express'
+import UserController from '../controllers/userController'
+import upload from '../utils/multer'
 
-
-const router= express.Router();
+const router = express.Router()
 
 router.get('', (req, res) => {
-    res.status(200).json('api ready');
+  res.status(200).json('api ready')
 })
-router.post('/register', UserController.registerUser);
-router.post('/login', UserController.loginUser);
-
-
-
+router.post('/register', upload.single('images'), UserController.registerUser)
+router.post('/login', UserController.loginUser)
+router.get('/user', UserController.getAllUser)
 
 export default router
-
-

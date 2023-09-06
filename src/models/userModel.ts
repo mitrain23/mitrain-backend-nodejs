@@ -1,10 +1,11 @@
-import { Post } from "@prisma/client";
+import { Image } from '@prisma/client'
 
 export interface UserModel {
-    id?: number;
-    email: string;
-    password: string;
-    name: string;
-    posts?: Post[];
-  }
-  
+  email: string
+  password: string
+  name: string
+  address: string
+  phoneIntWhatsapp: string
+  phoneIntContact: string
+  images?: Image
+}

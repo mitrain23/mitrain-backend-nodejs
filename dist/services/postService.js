@@ -16,171 +16,158 @@ const prisma_1 = __importDefault(require("../utils/prisma"));
 class PostService {
     static getAllPosts() {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const posts = yield prisma_1.default.post.findMany({
-                    include: { author: { select: { name: true } }, image: true },
-                });
-                return posts;
-            }
-            catch (error) {
-                throw Error(error.message);
-            }
+            const posts = yield prisma_1.default.post.findMany({
+                include: {
+                    mitra: {
+                        select: {
+                            name: true
+                        }
+                    },
+                    images: { select: { url: true } }
+                }
+            });
+            return posts;
         });
     }
     static getPostById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const getPostById = yield prisma_1.default.post.findUnique({
-                    where: {
-                        id: id,
-                    },
-                    include: { author: { select: { name: true } }, image: true },
-                });
-                return getPostById;
-            }
-            catch (error) {
-                throw Error('failed to get unique post');
-            }
+            const getPostById = yield prisma_1.default.post.findUnique({
+                where: {
+                    id: id
+                },
+                include: { images: true }
+            });
+            return getPostById;
         });
     }
-    static getPostByAuthor(authorId) {
+    static getPostByAuthor(mitraId) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const getPostByAuthor = yield prisma_1.default.post.findMany({
-                    where: {
-                        authorId,
+            const getPostByAuthor = yield prisma_1.default.post.findMany({
+                where: {
+                    mitraId
+                },
+                include: {
+                    mitra: {
+                        select: {
+                            name: true
+                        }
                     },
-                    include: { author: { select: { name: true } }, image: true },
-                });
-                return getPostByAuthor;
+                    images: { select: { url: true } }
+                }
+            });
+            if (!getPostByAuthor) {
+                throw Error('Post not found!');
             }
-            catch (error) {
-                throw Error('failed to get post by author');
-            }
+            return getPostByAuthor;
         });
     }
-    static createPost(postData, images) {
+    static createPost(postData, images, mitra) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const postDataInput = {
-                    title: postData.title,
-                    description: postData.description,
-                    price_min: postData.price_min,
-                    price_max: postData.price_max,
-                    location: postData.location,
-                    phone_number_whatsapp: postData.phone_number_whatsapp,
-                    phone_number_contact: postData.phone_number_contact,
-                    authorId: typeof postData.authorId === 'string' ? parseInt(postData.authorId) : postData.authorId,
-                    image: {
+            const { title, description, priceMin, priceMax, location, phoneIntWhatsapp, phoneIntContact, category } = postData;
+            const image = images.map((file) => file.path);
+            const mitraId = mitra;
+            console.log({ mitraId });
+            if (!title ||
+                !description ||
+                !priceMin ||
+                !priceMax ||
+                !location ||
+                !phoneIntWhatsapp ||
+                !phoneIntContact) {
+                throw Error('Fill all the require data');
+            }
+            const createdPost = yield prisma_1.default.post.create({
+                data: {
+                    title,
+                    description,
+                    priceMin,
+                    priceMax,
+                    location,
+                    phoneIntWhatsapp,
+                    phoneIntContact,
+                    category,
+                    mitraId,
+                    images: {
                         createMany: {
-                            data: images.map((file) => ({
-                                name: file.filename,
-                            })),
-                        },
+                            data: image.map((imageUrl) => ({
+                                url: imageUrl
+                            }))
+                        }
+                    }
+                },
+                include: {
+                    mitra: {
+                        select: {
+                            name: true
+                        }
                     },
-                };
-                const createdPost = yield prisma_1.default.post.create({
-                    data: postDataInput,
-                    include: { image: true },
-                });
-                return createdPost;
-            }
-            catch (error) {
-                console.error(error);
-                throw new Error('Failed to create a new post');
-            }
+                    images: { select: { url: true } }
+                }
+            });
+            return createdPost;
         });
     }
-    static updatePost(id, postData, images) {
+    static updatePost(id, postData, images, mitra) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const postDataInput = {
-                    title: postData.title,
-                    description: postData.description,
-                    price_min: postData.price_min,
-                    price_max: postData.price_max,
-                    location: postData.location,
-                    phone_number_whatsapp: postData.phone_number_whatsapp,
-                    phone_number_contact: postData.phone_number_contact,
-                    image: {
-                        createMany: {
-                            data: images.map((file) => ({
-                                name: file.filename,
-                            })),
-                        },
-                    },
-                };
+            const postDataInput = {
+                title: postData.title,
+                description: postData.description,
+                priceMin: postData.priceMin,
+                priceMax: postData.priceMax,
+                location: postData.location,
+                phoneIntWhatsapp: postData.phoneIntWhatsapp,
+                phoneIntContact: postData.phoneIntContact,
+                category: postData.category,
+                mitraId: mitra,
+                images: {
+                    createMany: {
+                        data: images.map((imageUrl) => ({
+                            url: imageUrl
+                        }))
+                    }
+                }
+            };
+            const post = yield prisma_1.default.post.findUnique({
+                where: {
+                    id: id
+                }
+            });
+            console.log(post);
+            if (!post) {
+                throw new Error('Cannot find post');
+            }
+            if (mitra !== post.mitraId) {
+                throw new Error('You are not the owner of post');
+            }
+            else {
                 const updatedPost = yield prisma_1.default.post.update({
                     where: { id: id },
                     data: postDataInput
                 });
                 return updatedPost;
             }
-            catch (error) {
-                console.error(error);
-                throw new Error('Failed to update post');
-            }
         });
     }
-    static deletePost(id) {
+    static deletePost(id, mitra) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
+            const post = yield prisma_1.default.post.findUnique({
+                where: {
+                    id: id
+                }
+            });
+            if (!post) {
+                throw new Error('Cannot find post');
+            }
+            if (mitra !== post.mitraId) {
+                throw new Error('You are not the owner of post');
+            }
+            else {
                 const deletedPost = yield prisma_1.default.post.delete({
                     where: {
-                        id: id,
+                        id: id
                     }
                 });
                 return deletedPost;
-            }
-            catch (error) {
-                throw new Error(error.message);
-            }
-        });
-    }
-    static searchQuery(searchText, lokasi, minPrice, maxPrice, skip, take) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const search = searchText || '';
-            const location = lokasi || '';
-            const strMinPrice = minPrice !== undefined ? String(minPrice) : undefined;
-            const strMaxPrice = maxPrice !== undefined ? String(maxPrice) : undefined;
-            const skipPage = skip || 0;
-            const takePage = take || 10;
-            try {
-                let whereClause = {};
-                if (search !== '') {
-                    // Apply search filter if searchText is not empty
-                    whereClause.title = {
-                        contains: search,
-                    };
-                }
-                if (location !== '') {
-                    // Apply location filter if lokasi is not empty
-                    whereClause.location = {
-                        contains: location,
-                    };
-                }
-                if (strMinPrice !== undefined) {
-                    // Apply minPrice filter if minPrice is not undefined
-                    whereClause.price_min = {
-                        gte: strMinPrice,
-                    };
-                }
-                if (strMaxPrice !== undefined) {
-                    // Apply maxPrice filter if maxPrice is not undefined
-                    whereClause.price_max = {
-                        lte: strMaxPrice,
-                    };
-                }
-                const results = yield prisma_1.default.post.findMany({
-                    where: whereClause,
-                    include: { author: { select: { name: true } }, image: true },
-                    skip: skipPage,
-                    take: takePage,
-                });
-                return results;
-            }
-            catch (error) {
-                // Handle error
             }
         });
     }
