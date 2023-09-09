@@ -21,7 +21,7 @@ class PostService {
       where: {
         id: id
       },
-      include: { images: true }
+      include: { images: true, mitra: true}
     })
     return getPostById
   }
@@ -57,7 +57,7 @@ class PostService {
       phoneIntContact,
       category
     } = postData
-    const image = images.map((file: any) => file.path)
+    const image = images.map((file: any) => file.filename)
     const mitraId = mitra
     console.log({ mitraId })
     if (

@@ -18,7 +18,7 @@ class MitraService {
       category,
       description
     } = mitraData
-    const image = images.map((file: any) => file.path)
+    const image = images.map((file: any) => file.filename)
     console.log(image)
     if (
       !email ||

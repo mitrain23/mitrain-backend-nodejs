@@ -20,6 +20,7 @@ class MitraController {
         description
       } = req.body
       const images = req.files
+      console.log(images, 'daidmwaiodwdoai')
       const mitraData = {
         email,
         password,

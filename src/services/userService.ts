@@ -15,15 +15,15 @@ class UserService {
       phoneIntWhatsapp,
       phoneIntContact
     } = userData
-    const imagePath = images.path
+    const imagePath = images ? images.filename : null;
+    console.log(imagePath)
     if (
       !email ||
       !password ||
       !name ||
       !address ||
       !phoneIntWhatsapp ||
-      !phoneIntContact ||
-      !imagePath
+      !phoneIntContact
     ) {
       throw Error('Fill all the require data')
     }
@@ -37,6 +37,7 @@ class UserService {
     }
 
     const hashPassword = await bcrypt.hash(password, 10)
+    console.log(hashPassword, 'hashPassword');
 
     const newUser = await prisma.user.create({
       data: {
@@ -66,22 +67,35 @@ class UserService {
   }
 
   static async loginUser(email: string, password: string) {
-    // Check if user exists
-    const user = await prisma.user.findUnique({ where: { email } })
-    if (!user) {
-      throw new Error('Invalid credentials')
-    }
+    try {
+      // Check if user exists
+      console.log(email)
+      const user = await prisma.user.findUnique({
+        where: { email }
+      })
 
-    // Compare passwords
-    const passwordsMatch = await bcrypt.compare(password, user.password)
-    if (!passwordsMatch) {
-      throw new Error('Invalid credentials')
-    }
+      if (!user) {
+        throw new Error('User not found')
+      }
 
-    return user
+      // Compare passwords
+      const passwordsMatch = await bcrypt.compare(password, user.password)
+
+      if (!passwordsMatch) {
+        throw new Error('Incorrect password')
+      }
+
+      // If everything is fine, return the user
+      return user
+    } catch (error: any) {
+      console.error('Error during login:', error.message);
+      throw new Error('Login failed. Please check your credentials.');
+    }
   }
 
-  static async generateToken(userId: string | undefined) {
+
+
+  static async generateToken(userId: string | undefined | number) {
     const token = jwt.sign({ userId }, process.env.JWT_SECRET || '', {
       expiresIn: '4h'
     })

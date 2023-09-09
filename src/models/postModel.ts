@@ -1,4 +1,4 @@
-import { Image, Mitra } from '@prisma/client'
+import { Image } from '@prisma/client'
 
 export interface PostModel {
   title: string
