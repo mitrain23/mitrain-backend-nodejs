@@ -57,7 +57,9 @@ class MitraController {
       res.status(200).json({
         data: {
           id: mitra.id,
-          email: mitra.email
+          email: mitra.email,
+          name: mitra.name,
+          isMitra: mitra.isMitra
         },
         token
       })

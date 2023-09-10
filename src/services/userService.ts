@@ -48,6 +48,7 @@ class UserService {
         phoneIntContact,
         phoneIntWhatsapp,
         isPremium: false,
+        isMitra: false,
         images: {
           create: {
             url: imagePath
@@ -71,7 +72,7 @@ class UserService {
       // Check if user exists
       console.log(email)
       const user = await prisma.user.findUnique({
-        where: { email }
+        where: { email },
       })
 
       if (!user) {

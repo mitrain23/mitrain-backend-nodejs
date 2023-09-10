@@ -19,6 +19,7 @@ model User {
   phoneIntWhatsapp String   @db.VarChar(15)
   phoneIntContact  String   @db.VarChar(15)
   isPremium        Boolean?
+  isMitra          Boolean
   images           Image?
 
   @@map("users")
@@ -35,6 +36,7 @@ model Mitra {
   category         String
   description      String
   isPremium        Boolean?
+  isMitra          Boolean
   post             Post[]
   images           Image[]
 
@@ -49,6 +51,7 @@ model Post {
   priceMin         String
   priceMax         String
   location         String
+  isLiked          Boolean?
   phoneIntWhatsapp String  @db.VarChar(15)
   phoneIntContact  String  @db.VarChar(15)
   mitra            Mitra  @relation(fields: [mitraId], references: [id])

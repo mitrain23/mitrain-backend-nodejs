@@ -55,6 +55,7 @@ class MitraService {
         category,
         description,
         isPremium: false,
+        isMitra: true,
         images: {
           createMany: {
             data: image.map((imageUrl: string) => ({

@@ -61,6 +61,7 @@ class PostsController {
       }
       const images = req.files
       const mitra = req.body.mitraId
+      console.log(mitra)
 
       const createdPost = await PostService.createPost(postData, images, mitra)
       res.status(200).json({
