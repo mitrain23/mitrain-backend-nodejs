@@ -4,10 +4,15 @@ import PostService from '../services/postService'
 class PostsController {
   static async getAllPosts(req: Request, res: Response) {
     try {
-      const posts = await PostService.getAllPosts()
-      res.status(200).json({ data: posts })
+      const page = parseInt(req.query.page as string) || 1;
+      const pageSize = parseInt(req.query.pageSize as string) || 10;
+      const searchTerm = req.query.searchTerm as string || ''; 
+
+      const posts = await PostService.getAllPosts(page, pageSize, searchTerm);
+
+      res.status(200).json({ data: posts });
     } catch (err: any) {
-      res.status(500).json({ error: err.message })
+      res.status(500).json({ error: err.message });
     }
   }
 

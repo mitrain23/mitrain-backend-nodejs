@@ -2,8 +2,17 @@ import { PostModel } from '../models/postModel'
 import prisma from '../utils/prisma'
 
 class PostService {
-  static async getAllPosts() {
+  static async getAllPosts(page = 1, pageSize = 10, searchTerm = '') {
+    const offset = (page - 1) * pageSize;
+    
     const posts = await prisma.post.findMany({
+      skip: offset,
+      take: pageSize,
+      where: {
+        title: {
+          contains: searchTerm // Filter by title containing the searchTerm
+        }
+      },
       include: {
         mitra: {
           select: {
@@ -12,8 +21,9 @@ class PostService {
         },
         images: { select: { url: true } }
       }
-    })
-    return posts
+    });
+    
+    return posts;
   }
 
   static async getPostById(id: string) {
@@ -120,6 +130,7 @@ class PostService {
       phoneIntContact: postData.phoneIntContact,
       category: postData.category,
       mitraId: mitra,
+      isLiked: postData.isLiked,
       images: {
         createMany: {
           data: images.map((imageUrl: string) => ({

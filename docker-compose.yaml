@@ -1,7 +1,6 @@
 version: '3.3'
 
 services:
-
   express-app:
     container_name: express-app
     build:
@@ -13,17 +12,15 @@ services:
     depends_on:
       - mySqlCont
     environment:
-      DATABASE_URL: mysql://user:mypassword@mySqlCont:4001/mitraindb
+      DATABASE_URL: mysql://user:mypassword@mySqlCont:1002/mitraindb
       PORT: 2000
       JWT_SECRET: diuwahiuwahdaiu23133212uihdwa
-    
-
 
   mySqlCont:
     image: mysql:latest
     container_name: mySqlCont
     restart: always
-    command: --port=4001
+    command: --port=1002
     environment:
       MYSQL_USER: user
       MYSQL_ROOT_PASSWORD: mypassword
@@ -32,11 +29,7 @@ services:
     volumes:
       - mitrain-db:/var/lib/mysql
     ports:
-      - '5000:5000'
-    
-
-
+      - '1002:1002'
 
 volumes:
   mitrain-db:
-

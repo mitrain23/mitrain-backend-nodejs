@@ -9,5 +9,6 @@ export interface PostModel {
   phoneIntWhatsapp: string
   phoneIntContact: string
   category: string
+  isLiked?: boolean
   image?: Image[]
 }
