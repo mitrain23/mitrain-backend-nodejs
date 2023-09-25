@@ -33,8 +33,10 @@ model Mitra {
   address          String
   phoneIntWhatsapp String   @db.VarChar(15)
   phoneIntContact  String   @db.VarChar(15)
-  category         String
+  categoryName     String
+  category         Category @relation(fields: [categoryName], references: [categoryName])
   description      String
+  experience       String
   isPremium        Boolean?
   isMitra          Boolean
   post             Post[]
@@ -44,7 +46,7 @@ model Mitra {
 }
 
 model Post {
-  id               String  @id @default(uuid())
+  id               String   @id @default(uuid())
   title            String
   category         String
   description      String
@@ -52,9 +54,9 @@ model Post {
   priceMax         String
   location         String
   isLiked          Boolean?
-  phoneIntWhatsapp String  @db.VarChar(15)
-  phoneIntContact  String  @db.VarChar(15)
-  mitra            Mitra  @relation(fields: [mitraId], references: [id])
+  phoneIntWhatsapp String   @db.VarChar(15)
+  phoneIntContact  String   @db.VarChar(15)
+  mitra            Mitra    @relation(fields: [mitraId], references: [id])
   mitraId          String
   images           Image[]
 
@@ -72,34 +74,16 @@ model Image {
   url     String?
 }
 
-// model Post {
-//   id                    Int      @id @default(autoincrement())
-//   createdAt             DateTime @default(now())
-//   updatedAt             DateTime @updatedAt
-//   title                 String   @db.VarChar(255)
-//   description           String?  @db.VarChar(1000)
-//   price_min             String
-//   price_max             String
-//   location              String
-//   phone_number_whatsapp String
-//   phone_number_contact  String?
-//   // category              Category @relation
-//   subtitle              String?
-//   image                 Image[]
-//   authorId              Int
-//   //author                User     @relation(fields: [authorId], references: [id])
-// }
+model Category {
+  id           String        @id @default(uuid())
+  categoryName String        @unique
+  Mitra        Mitra[]
+  Subcategory  Subcategory[]
+}
 
-// // model Category {
-// //   id            Int    @id @default(autoincrement())
-// //   category_name String
-// // }
-
-// model Image {
-//   id     Int    @id @default(autoincrement())
-//   name   String
-//   postId Int?
-//   posts  Post?  @relation(fields: [postId], references: [id])
-//   userId Int?   @unique
-//   //user   User?  @relation(fields: [userId], references: [id])
-// }
+model Subcategory {
+  id              String   @id @default(uuid())
+  subcategoryName String   @unique
+  categoryName    String
+  category        Category @relation(fields: [categoryName], references: [categoryName])
+}

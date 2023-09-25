@@ -15,8 +15,7 @@ class UserService {
       phoneIntWhatsapp,
       phoneIntContact
     } = userData
-    const imagePath = images ? images.filename : null;
-    console.log(imagePath)
+    const imagePath = images ? images.filename : null
     if (
       !email ||
       !password ||
@@ -37,7 +36,6 @@ class UserService {
     }
 
     const hashPassword = await bcrypt.hash(password, 10)
-    console.log(hashPassword, 'hashPassword');
 
     const newUser = await prisma.user.create({
       data: {
@@ -70,9 +68,8 @@ class UserService {
   static async loginUser(email: string, password: string) {
     try {
       // Check if user exists
-      console.log(email)
       const user = await prisma.user.findUnique({
-        where: { email },
+        where: { email }
       })
 
       if (!user) {
@@ -89,12 +86,10 @@ class UserService {
       // If everything is fine, return the user
       return user
     } catch (error: any) {
-      console.error('Error during login:', error.message);
-      throw new Error('Login failed. Please check your credentials.');
+      console.error('Error during login:', error.message)
+      throw new Error('Login failed. Please check your credentials.')
     }
   }
-
-
 
   static async generateToken(userId: string | undefined | number) {
     const token = jwt.sign({ userId }, process.env.JWT_SECRET || '', {

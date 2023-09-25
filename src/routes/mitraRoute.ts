@@ -4,15 +4,15 @@ import upload from '../utils/multer'
 
 const router = express.Router()
 
+router.get('/', MitraController.getAllMitra)
 router.get('', (req, res) => {
   res.status(200).json('api ready')
 })
 router.post(
-  '/register/mitra',
+  '/register',
   upload.array('images', 5),
   MitraController.registerMitra
 )
-router.post('/login/mitra', MitraController.loginMitra)
-router.get('/mitra', MitraController.getAllMitra)
+router.post('/login', MitraController.loginMitra)
 
 export default router

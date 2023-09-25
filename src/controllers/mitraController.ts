@@ -16,11 +16,11 @@ class MitraController {
         address,
         phoneIntWhatsapp,
         phoneIntContact,
-        category,
+        categoryName,
+        experience,
         description
       } = req.body
       const images = req.files
-      console.log(images, 'daidmwaiodwdoai')
       const mitraData = {
         email,
         password,
@@ -28,7 +28,8 @@ class MitraController {
         address,
         phoneIntWhatsapp,
         phoneIntContact,
-        category,
+        categoryName,
+        experience,
         description
       }
 

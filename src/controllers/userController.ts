@@ -13,8 +13,7 @@ class UserController {
         phoneIntWhatsapp,
         phoneIntContact
       } = req.body
-      console.log(phoneIntWhatsapp, 'ini wa');
-      const images = req.file || null;
+      const images = req.file || null
       const userData = {
         email,
         password,
@@ -45,9 +44,7 @@ class UserController {
 
     try {
       const { email, password } = req.body
-      console.log(email, password)
       const user = await UserService.loginUser(email, password)
-      console.log(user, 'doiandiowadwioa')
 
       const token = await UserService.generateToken(user.id)
 

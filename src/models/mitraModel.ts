@@ -7,8 +7,9 @@ export interface MitraModel {
   address: string
   phoneIntWhatsapp: string
   phoneIntContact: string
-  category: string
+  categoryName: string
   description: string
+  experience: string
   isPremium?: Boolean
   image?: Image[]
   post?: Post[]

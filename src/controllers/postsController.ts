@@ -4,15 +4,15 @@ import PostService from '../services/postService'
 class PostsController {
   static async getAllPosts(req: Request, res: Response) {
     try {
-      const page = parseInt(req.query.page as string) || 1;
-      const pageSize = parseInt(req.query.pageSize as string) || 10;
-      const searchTerm = req.query.searchTerm as string || ''; 
+      const page = parseInt(req.query.page as string) || 1
+      const pageSize = parseInt(req.query.pageSize as string) || 10
+      const searchTerm = (req.query.searchTerm as string) || ''
 
-      const posts = await PostService.getAllPosts(page, pageSize, searchTerm);
+      const posts = await PostService.getAllPosts(page, pageSize, searchTerm)
 
-      res.status(200).json({ data: posts });
+      res.status(200).json({ data: posts })
     } catch (err: any) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ error: err.message })
     }
   }
 
@@ -66,7 +66,6 @@ class PostsController {
       }
       const images = req.files
       const mitra = req.body.mitraId
-      console.log(mitra)
 
       const createdPost = await PostService.createPost(postData, images, mitra)
       res.status(200).json({
@@ -110,56 +109,6 @@ class PostsController {
       res.status(500).json({ error: error.message })
     }
   }
-
-  //   static async searchQuery(req: Request, res: Response) {
-  //     const { lokasi, price_min, price_max, search, page, pageSize } = req.query
-  //     const minPrice = parseFloat(price_min as string)
-  //     const maxPrice = parseFloat(price_max as string)
-  //     const parsedPage = parseInt(page as string, 10)
-  //     const parsedPageSize = parseInt(pageSize as string, 10)
-
-  //     const skip = parsedPage * parsedPageSize - parsedPageSize
-  //     const take = parsedPageSize
-
-  //     console.log(lokasi)
-
-  //     if (isNaN(minPrice) && isNaN(maxPrice)) {
-  //       try {
-  //         const results = await PostService.searchQuery(
-  //           search as string,
-  //           lokasi as string,
-  //           undefined,
-  //           undefined,
-  //           skip,
-  //           take
-  //         )
-  //         res.json({
-  //           results
-  //         })
-  //       } catch (err: any) {
-  //         res.status(500).json({ error: err.message })
-  //       }
-  //     } else if (isNaN(minPrice) || isNaN(maxPrice)) {
-  //       return res.status(400).json({ error: 'Invalid price range.' })
-  //     } else {
-  //       console.log(minPrice, maxPrice)
-  //       try {
-  //         const results = await PostService.searchQuery(
-  //           search as string,
-  //           lokasi as string,
-  //           minPrice,
-  //           maxPrice,
-  //           skip,
-  //           take
-  //         )
-  //         res.json({
-  //           results
-  //         })
-  //       } catch (err: any) {
-  //         res.status(500).json({ error: err.message })
-  //       }
-  //     }
-  //   }
 }
 
 export default PostsController

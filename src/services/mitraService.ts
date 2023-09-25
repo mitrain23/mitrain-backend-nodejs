@@ -15,11 +15,11 @@ class MitraService {
       address,
       phoneIntWhatsapp,
       phoneIntContact,
-      category,
-      description
+      categoryName,
+      description,
+      experience
     } = mitraData
     const image = images.map((file: any) => file.filename)
-    console.log(image)
     if (
       !email ||
       !password ||
@@ -29,7 +29,8 @@ class MitraService {
       !phoneIntContact ||
       !image ||
       !description ||
-      !category
+      !experience ||
+      !categoryName
     ) {
       throw Error('Fill all the require data')
     }
@@ -52,7 +53,8 @@ class MitraService {
         address,
         phoneIntContact,
         phoneIntWhatsapp,
-        category,
+        categoryName,
+        experience,
         description,
         isPremium: false,
         isMitra: true,
@@ -69,7 +71,8 @@ class MitraService {
           select: {
             url: true
           }
-        }
+        },
+        category: true
       }
     })
 
@@ -106,7 +109,8 @@ class MitraService {
           select: {
             url: true
           }
-        }
+        },
+        category: true
       }
     })
     return mitra

@@ -3,8 +3,8 @@ import prisma from '../utils/prisma'
 
 class PostService {
   static async getAllPosts(page = 1, pageSize = 10, searchTerm = '') {
-    const offset = (page - 1) * pageSize;
-    
+    const offset = (page - 1) * pageSize
+
     const posts = await prisma.post.findMany({
       skip: offset,
       take: pageSize,
@@ -21,9 +21,9 @@ class PostService {
         },
         images: { select: { url: true } }
       }
-    });
-    
-    return posts;
+    })
+
+    return posts
   }
 
   static async getPostById(id: string) {
@@ -31,7 +31,7 @@ class PostService {
       where: {
         id: id
       },
-      include: { images: true, mitra: true}
+      include: { images: true, mitra: true }
     })
     return getPostById
   }
@@ -69,7 +69,6 @@ class PostService {
     } = postData
     const image = images.map((file: any) => file.filename)
     const mitraId = mitra
-    console.log({ mitraId })
     if (
       !title ||
       !description ||
@@ -144,7 +143,7 @@ class PostService {
         id: id
       }
     })
-    console.log(post)
+
     if (!post) {
       throw new Error('Cannot find post')
     }
