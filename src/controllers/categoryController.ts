@@ -28,9 +28,9 @@ class CategoryController {
 
   static async createCategory(req: Request, res: Response) {
     try {
-      const dataInput = req.body
+      const categoryName = req.body
 
-      const createdCategory = await CategoryService.createCategory(dataInput)
+      const createdCategory = await CategoryService.createCategory(categoryName)
       res.status(200).json({
         data: createdCategory
       })

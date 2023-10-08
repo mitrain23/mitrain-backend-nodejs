@@ -44,7 +44,8 @@ class PostService {
       include: {
         mitra: {
           select: {
-            name: true
+            name: true,
+            images: true
           }
         },
         images: { select: { url: true } }
