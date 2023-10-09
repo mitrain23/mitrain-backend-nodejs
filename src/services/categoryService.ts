@@ -32,16 +32,14 @@ class CategoryService {
     return getCategoryById
   }
 
-  static async createCategory(categoryData: CategoryModel) {
-    const dataInput = {
-      categoryName: categoryData.categoryName
-    }
-    if (!dataInput) {
-      throw Error('Fill all the require data')
-    }
+  static async createCategory(categoryData: any) {
+    console.log(categoryData.categoryName)
+    
 
     const createdCategory = await prisma.category.create({
-      data: dataInput
+      data: {
+        categoryName: categoryData.categoryName
+      }
     })
 
     return createdCategory

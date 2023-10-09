@@ -12,7 +12,7 @@ services:
     depends_on:
       - mySqlCont
     environment:
-      DATABASE_URL: mysql://user:mypassword@mySqlCont:1002/mitraindb
+      DATABASE_URL: mysql://root:mypassword@mySqlCont:1002/mitraindb
       PORT: 2000
       JWT_SECRET: diuwahiuwahdaiu23133212uihdwa
 
@@ -22,10 +22,12 @@ services:
     restart: always
     command: --port=1002
     environment:
-      MYSQL_USER: user
-      MYSQL_ROOT_PASSWORD: mypassword
-      MYSQL_PASSWORD: mypassword
+      MYSQL_ROOT_PASSWORD: mypassword  # Set root password
       MYSQL_DATABASE: mitraindb
+      # MYSQL_USER: user
+      # MYSQL_ROOT_PASSWORD: mypassword
+      # MYSQL_PASSWORD: mypassword
+      # MYSQL_DATABASE: mitraindb
     volumes:
       - mitrain-db:/var/lib/mysql
     ports:
