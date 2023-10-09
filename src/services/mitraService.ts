@@ -72,7 +72,11 @@ class MitraService {
             url: true
           }
         },
-        category: true
+        category: {
+          include: {
+            Subcategory: true
+          }
+        }
       }
     })
 
@@ -110,7 +114,11 @@ class MitraService {
             url: true
           }
         },
-        category: true
+        category: {
+          include: {
+            Subcategory: true
+          }
+        }
       }
     })
     return mitra

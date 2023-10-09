@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
 import UserService from '../services/userService'
+import { compressImage } from '../utils/compressImage'
 
 class UserController {
   static async registerUser(req: Request, res: Response): Promise<any> {
@@ -26,6 +27,10 @@ class UserController {
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() })
       }
+
+      const compressedImage = await compressImage(images)
+
+      console.log({ compressedImage })
       const newUser = await UserService.registerUser(userData, images)
 
       res.status(200).json({

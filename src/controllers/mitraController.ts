@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
 import MitraService from '../services/mitraService'
+import { compressImage } from '../utils/compressImage'
 
 class MitraController {
   static async registerMitra(req: Request, res: Response): Promise<any> {
@@ -20,7 +21,7 @@ class MitraController {
         experience,
         description
       } = req.body
-      const images = req.files
+      const images = req.files as Express.Multer.File[]
       const mitraData = {
         email,
         password,
@@ -32,6 +33,8 @@ class MitraController {
         experience,
         description
       }
+      console.log(images)
+      const compressedImages = await Promise.all(images.map(compressImage))
 
       const newMitra = await MitraService.registerMitra(mitraData, images)
 
